@@ -1,0 +1,45 @@
+1 patch for repository http://basilisk.fr/basilisk:
+
+patch 2aede789d53035b6002a514b1eb745bcc1ade2a1
+Author: tomas.fullana@etu.upmc.fr
+Date:   Thu May  2 16:18:39 CEST 2019
+  * Robin boundary condition. Robin_homogeneous(lambda) not coded yet.
+
+New patches:
+
+[Robin boundary condition. Robin_homogeneous(lambda) not coded yet.
+tomas.fullana@etu.upmc.fr**20190502141839
+ Ignore-this: da1fbda4c32dcc03b84a61d555584c16
+] hunk ./src/common.h 931
+-
++// Definition of the mixed boundary condition
++// lmbda*(du/dn) + u = u_wall	 
++@define robin(u_wall,lmbda)     (((2.*Delta*(u_wall))/(Delta+2.*(lmbda)))+ ((2.*(lmbda)-Delta)/(2.*(lmbda)+Delta))*val(_s,0,0,0))
++// Replace the slip length value by lmbda. To be done.	
++@define robin_homogeneous()		( ((2.*(1e-2)-Delta)/(2.*(1e-2)+Delta))*val(_s,0,0,0) )
++	
+hunk ./src/qcc.lex 1109
+-    char * cond[2] = {"dirichlet", "neumann"};
++	/* replace robin(u_plate,lmbda) with robin(0,..) */
++    char * cond[3] = {"dirichlet", "neumann", "robin"};
+hunk ./src/qcc.lex 1116
+-	for (i = 0; i < 2; i++)
++	for (i = 0; i < 3; i++)
+hunk ./src/qcc.lex 2051
++  para++;
++  if (inboundary && boundarycomponent == 'x')
++    fputs (&yytext[9], yyout);
++  else
++    ECHO;
++}
++
++robin{WS}*[(] {
+
+Context:
+
+[TAG release 19-3-23
+Stephane Popinet <popinet@basilisk.fr>**20190323161754
+ Ignore-this: 6e136dfac5a82fd0cba7077c1a31e92a
+] 
+Patch bundle hash:
+b6c3246af1579c876170d8e375780920208d19a2
